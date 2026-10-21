@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Worthwhile (working title)</title>
+<style>
+
+:root{
+  --bg:#F2F4EF; --surface:#FFFFFF; --ink:#14213D; --muted:#566074; --line:#D5DACD;
+  --accent:#F2B632; --accent-ink:#14213D; --focus:#2B59C3;
+  --c-learn:#2B59C3; --c-inspire:#8A5A00; --c-news:#B8432B; --c-skills:#1F7A5C; --c-laughs:#7A4FB5;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0F1626; --surface:#17213A; --ink:#EEF1F8; --muted:#A3AEC6; --line:#2A3757;
+    --accent:#F2B632; --accent-ink:#14213D; --focus:#8FB0FF;
+    --c-learn:#8FB0FF; --c-inspire:#F2B632; --c-news:#F29A82; --c-skills:#63CBA6; --c-laughs:#BFA3EE;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.15;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.top{max-width:520px;margin:0 auto;padding:14px 16px 10px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--ink)}
+.brand h1{font-size:24px;letter-spacing:-.01em}
+.tag{margin:0;color:var(--muted);font-size:14px}
+main{max-width:520px;margin:0 auto;padding:0 0 96px;min-height:70vh}
+main:focus{outline:none}
+.pad{padding:8px 16px}
+.lead{font-size:15px;color:var(--muted);margin:6px 0 16px}
+
+/* Feed posts: full-width, separated by rules, not rounded cards */
+.post{border-top:1px solid var(--line);padding:18px 0 6px}
+.post:first-child{border-top:0}
+.media{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;background:#000}
+.textcard{width:100%;aspect-ratio:4/5;display:flex;flex-direction:column;justify-content:flex-end;padding:22px 20px}
+.textcard h3{font-size:clamp(28px,8vw,40px);letter-spacing:-.015em}
+.textcard small{display:block;margin-bottom:10px;font-size:14px;opacity:.9}
+.cat-learn{background:#1E3F8F;color:#fff}
+.cat-inspire{background:#F2B632;color:#14213D}
+.cat-news{background:#8F2F1B;color:#fff}
+.cat-skills{background:#17614A;color:#fff}
+.cat-laughs{background:#5E3A96;color:#fff}
+.artcard{position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;background:#1E3F8F}
+.artcard svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.artcard .cap{position:absolute;left:0;right:0;bottom:0;padding:70px 20px 20px;color:#fff;background:linear-gradient(to top,rgba(10,15,30,.88),rgba(10,15,30,0))}
+.artcard .cap small{display:block;margin-bottom:8px;font-size:14px;opacity:.92}
+.artcard .cap h3{font-size:clamp(28px,8vw,40px);letter-spacing:-.015em}
+.meta{padding:12px 16px 0}
+.catlabel{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.catlabel i{width:10px;height:10px;border-radius:50%;background:currentColor;display:inline-block}
+.t-learn{color:var(--c-learn)} .t-inspire{color:var(--c-inspire)} .t-news{color:var(--c-news)} .t-skills{color:var(--c-skills)} .t-laughs{color:var(--c-laughs)}
+.meta h3{font-size:21px;margin:6px 0 6px}
+.meta p{margin:0 0 8px}
+.source{font-size:14px;word-break:break-all}
+.source a{color:var(--focus)}
+.why{font-size:13px;color:var(--muted);margin:6px 0 12px}
+.sample{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 8px;margin-left:8px;color:var(--muted);font-weight:400}
+.actions{display:flex;gap:10px;padding:0 16px 14px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--ink);background:transparent;border-radius:99px;padding:10px 18px;cursor:pointer;font-weight:600;min-height:44px}
+.btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.big{padding:12px 22px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:active{transform:translateY(1px)}
+.count{font-weight:400;opacity:.8;margin-left:6px}
+.actions.icons{padding:0 8px 14px;gap:2px;align-items:center}
+.actions .sp{flex:1}
+.ib{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:8px 10px;min-width:44px;min-height:44px;cursor:pointer;color:var(--ink);border-radius:12px;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums}
+.ib:active{transform:scale(.94)}
+.ic{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ib.like[aria-pressed="true"]{color:#E0405A}
+.ib.like[aria-pressed="true"] .ic{fill:currentColor}
+.ib.help[aria-pressed="true"] .ic{fill:var(--accent)}
+.ib.save[aria-pressed="true"] .ic{fill:currentColor}
+
+/* End of feed */
+.caught{margin:8px 16px 0;padding:36px 20px;border:2px solid var(--ink);border-radius:18px;text-align:center}
+.caught h2{font-size:28px;margin-bottom:8px}
+.caught p{margin:0 auto 18px;max-width:30ch;color:var(--muted)}
+
+/* Onboarding + forms */
+.chips{display:grid;gap:10px;margin:8px 0 22px}
+.chip{display:flex;gap:12px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:14px;cursor:pointer;width:100%}
+.chip[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.chip b{display:block;font-size:17px}
+.chip span{font-size:14px;color:var(--muted)}
+.dot{flex:none;width:14px;height:14px;border-radius:50%;margin-top:5px}
+.field{display:block;margin:0 0 16px}
+.field>span{display:block;font-weight:600;margin-bottom:6px}
+.field small{display:block;color:var(--muted);margin-top:4px;font-size:13px}
+input[type=text],input[type=url],select,textarea{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface)}
+textarea{min-height:96px;resize:vertical}
+.err{color:var(--c-news);font-weight:600;margin:0 0 12px}
+
+/* Dials */
+.dial{margin:0 0 16px}
+.dial label{display:flex;justify-content:space-between;gap:12px;font-weight:600;margin-bottom:2px}
+.dial output{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:400}
+.dial small{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
+input[type=range]{width:100%;accent-color:var(--ink);height:32px}
+.group{border-top:1px solid var(--line);padding-top:18px;margin-top:18px}
+.group h2{font-size:20px;margin-bottom:10px}
+.rank{list-style:none;margin:0;padding:0}
+.rank li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.rank li:first-child{border-top:0}
+.rank .n{width:22px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rank .tt{flex:1;min-width:0}
+.rank .tt b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank .tt span{font-size:12px;color:var(--muted)}
+.rank .sc{font-variant-numeric:tabular-nums;font-weight:600}
+.rank .btn{padding:6px 12px;min-height:36px;font-size:14px}
+
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .in{display:flex;width:100%;max-width:520px}
+nav.tabs button{flex:1;background:none;border:0;padding:14px 6px;font-weight:600;color:var(--muted);cursor:pointer;min-height:56px;border-top:3px solid transparent}
+nav.tabs button[aria-current="page"]{color:var(--ink);border-top-color:var(--accent)}
+#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){#toast{transition:none}.btn:active{transform:none}}
+
+input[type=email],input[type=password]{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface)}
+.seg{display:flex;gap:8px;margin:12px 0 18px}
+.seg button{flex:1;border:1.5px solid var(--line);background:transparent;border-radius:99px;padding:10px;font-weight:600;cursor:pointer;min-height:44px}
+.seg button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.comments{padding:0 16px 12px}
+.comments p{margin:0 0 8px;font-size:15px}
+.comments .none{color:var(--muted);font-size:14px}
+.cform{display:flex;gap:8px;margin-top:8px}
+.cform input{flex:1;min-width:0}
+.linkrow{display:flex;gap:18px;padding:0 16px 14px}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;padding:6px 0;min-height:32px}
+.notice{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px;margin:0 0 14px;font-size:14px}
+.empty{padding:40px 24px;text-align:center;color:var(--muted)}
+nav.tabs button{font-size:14px;padding:14px 2px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark" aria-hidden="true"></span><h1>Worthwhile</h1></div>
+  <p class="tag">Time well spent</p>
+</header>
+<main id="app" tabindex="-1"><div class="empty">Loading…</div></main>
+<nav class="tabs" aria-label="Main" style="display:none"><div class="in" id="navin"></div></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://lzpueeegklpdjiawgnkg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ryzo299G2zBM5PGB0PnOzQ_1riSnZK7'; // public key, safe in the browser
+const FEED_SIZE = 8, MAX_MB = 50;
+const CATS = {
+  learn:   {name:'Learn',            desc:'Explainers and lessons that make you smarter.'},
+  inspire: {name:'Inspire',          desc:'Stories and ideas about what you can become.'},
+  news:    {name:"What's happening", desc:'Real events around you, with sources.'},
+  skills:  {name:'Skills',           desc:'Practical things you can use this week.'},
+  laughs:  {name:'Laughs',           desc:'A little humor, kept in check.'}
+};
+const DEFAULT_DIALS = {topic:60, recency:30, value:60, popularity:10, humorCap:20, boost:{learn:0,inspire:0,news:0,skills:0,laughs:0}};
+
+const ART = {
+  s1:`<rect width="400" height="500" fill="#1E3F8F"/><circle cx="312" cy="92" r="34" fill="#F2B632"/>
+    <polygon points="70,150 200,80 330,150" fill="#E9EEF9"/><rect x="70" y="150" width="260" height="12" fill="#fff"/>
+    <g fill="#fff"><rect x="88" y="162" width="24" height="90"/><rect x="138" y="162" width="24" height="90"/><rect x="188" y="162" width="24" height="90"/><rect x="238" y="162" width="24" height="90"/><rect x="288" y="162" width="24" height="90"/></g>
+    <rect x="66" y="252" width="268" height="14" fill="#fff"/><rect x="50" y="266" width="300" height="12" fill="#C9D5F0"/><rect x="34" y="278" width="332" height="12" fill="#9FB4E6"/>`,
+  s2:`<rect width="400" height="500" fill="#1E3F8F"/>
+    <g fill="none" stroke="#fff" stroke-width="3"><circle cx="200" cy="170" r="120" opacity=".14"/><circle cx="200" cy="170" r="88" opacity=".24"/><circle cx="200" cy="170" r="56" opacity=".4"/></g>
+    <rect x="165" y="108" width="70" height="124" rx="12" fill="#fff"/><rect x="173" y="120" width="54" height="100" rx="6" fill="#1E3F8F"/><circle cx="200" cy="170" r="10" fill="#F2B632"/>
+    <g fill="#F29A82"><circle cx="112" cy="96" r="14"/><circle cx="296" cy="128" r="12"/><circle cx="104" cy="226" r="10"/><circle cx="306" cy="236" r="16"/></g>`,
+  s3:`<rect width="400" height="500" fill="#F2B632"/><circle cx="200" cy="205" r="84" fill="#FFD76E"/><circle cx="200" cy="205" r="50" fill="#FFF0C2"/>
+    <rect y="205" width="400" height="295" fill="#14213D"/><polygon points="182,205 218,205 300,500 100,500" fill="#2B3A5E"/>
+    <g fill="#F2B632"><rect x="198" y="218" width="4" height="14"/><rect x="197" y="246" width="6" height="22"/><rect x="195" y="288" width="10" height="34"/></g>`,
+  s4:`<rect width="400" height="500" fill="#F2B632"/>
+    <rect x="86" y="256" width="228" height="30" rx="4" fill="#14213D"/><rect x="104" y="226" width="192" height="30" rx="4" fill="#fff"/><rect x="92" y="196" width="216" height="30" rx="4" fill="#B8432B"/>
+    <g fill="#F2B632" opacity=".7"><rect x="112" y="266" width="60" height="4"/><rect x="124" y="236" width="50" height="4"/><rect x="108" y="206" width="70" height="4"/></g>
+    <path d="M200 196 L200 140" stroke="#17614A" stroke-width="6" stroke-linecap="round"/><ellipse cx="178" cy="148" rx="26" ry="12" transform="rotate(-30 178 148)" fill="#17614A"/><ellipse cx="224" cy="132" rx="26" ry="12" transform="rotate(30 224 132)" fill="#17614A"/>`,
+  s5:`<rect width="400" height="500" fill="#17614A"/>
+    <rect x="110" y="56" width="180" height="236" rx="10" fill="#fff"/><circle cx="150" cy="100" r="18" fill="#17614A"/><rect x="180" y="88" width="90" height="10" rx="3" fill="#C9D5CE"/><rect x="180" y="106" width="60" height="8" rx="3" fill="#DDE6E1"/>
+    <g fill="#DDE6E1"><rect x="130" y="146" width="140" height="8" rx="3"/><rect x="130" y="166" width="120" height="8" rx="3"/><rect x="130" y="186" width="140" height="8" rx="3"/><rect x="130" y="206" width="100" height="8" rx="3"/></g>
+    <rect x="130" y="230" width="140" height="14" rx="3" fill="#F2B632"/><circle cx="292" cy="270" r="30" fill="#F2B632"/><path d="M277 270 L287 281 L307 258" fill="none" stroke="#14213D" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`,
+  s6:`<rect width="400" height="500" fill="#17614A"/>
+    <text x="200" y="250" font-size="230" font-family="Georgia,serif" font-weight="700" fill="#fff" text-anchor="middle">?</text>
+    <g fill="#F2B632"><circle cx="104" cy="96" r="16"/><circle cx="308" cy="86" r="12"/><circle cx="324" cy="196" r="10"/><circle cx="84" cy="206" r="8"/></g>`,
+  s7:`<rect width="400" height="500" fill="#8F2F1B"/>
+    <circle cx="180" cy="150" r="76" fill="#A8402C" stroke="#fff" stroke-width="14"/><line x1="236" y1="206" x2="306" y2="276" stroke="#fff" stroke-width="20" stroke-linecap="round"/>
+    <g fill="#fff"><rect x="136" y="116" width="88" height="10" rx="3"/><rect x="136" y="138" width="60" height="8" rx="3" opacity=".8"/><rect x="136" y="156" width="76" height="8" rx="3" opacity=".8"/><rect x="136" y="174" width="50" height="8" rx="3" opacity=".8"/></g>
+    <circle cx="314" cy="86" r="28" fill="#F2B632"/><path d="M300 86 L310 97 L328 75" fill="none" stroke="#14213D" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`,
+  s8:`<rect width="400" height="500" fill="#8F2F1B"/>
+    <rect x="196" y="84" width="8" height="176" fill="#fff"/><rect x="150" y="258" width="100" height="12" rx="6" fill="#fff"/><rect x="90" y="92" width="220" height="8" rx="4" fill="#fff"/><circle cx="200" cy="80" r="11" fill="#F2B632"/>
+    <g stroke="#fff" stroke-width="3"><line x1="100" y1="100" x2="68" y2="170"/><line x1="100" y1="100" x2="132" y2="170"/><line x1="300" y1="100" x2="268" y2="170"/><line x1="300" y1="100" x2="332" y2="170"/></g>
+    <path d="M58 170 Q100 214 142 170Z" fill="#F2B632"/><path d="M258 170 Q300 214 342 170Z" fill="#F2B632"/>`,
+  s9:`<rect width="400" height="500" fill="#5E3A96"/>
+    <rect x="130" y="56" width="124" height="214" rx="18" fill="#fff"/><rect x="140" y="72" width="104" height="180" rx="8" fill="#2D1B4E"/><polygon points="176,140 176,190 220,165" fill="#F2B632"/>
+    <circle cx="306" cy="230" r="42" fill="#F2B632"/><g stroke="#14213D" stroke-width="5" stroke-linecap="round"><line x1="306" y1="230" x2="306" y2="202"/><line x1="306" y1="230" x2="326" y2="242"/></g>`,
+  s10:`<rect width="400" height="500" fill="#5E3A96"/>
+    <path d="M200 120 L88 100 L88 252 L200 272Z" fill="#fff"/><path d="M200 120 L312 100 L312 252 L200 272Z" fill="#E8DDF7"/>
+    <g fill="#BFA3EE"><rect x="108" y="128" width="70" height="6" rx="3"/><rect x="108" y="148" width="60" height="6" rx="3"/><rect x="108" y="168" width="70" height="6" rx="3"/></g>
+    <g transform="rotate(-8 200 205)"><rect x="162" y="136" width="76" height="118" rx="14" fill="#2D1B4E"/><circle cx="188" cy="176" r="10" fill="#F2B632"/><circle cx="214" cy="204" r="8" fill="#BFA3EE"/><rect x="176" y="224" width="48" height="8" rx="4" fill="#F2B632"/></g>`
+};
+
+const ic = inner => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${inner}</svg>`;
+const ICONS = {
+  heart: ic('<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>'),
+  bulb: ic('<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>'),
+  comment: ic('<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>'),
+  share: ic('<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>'),
+  bookmark: ic('<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>')
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),2200); }
+function ago(t){ const s=(Date.now()-new Date(t))/1000; if(s<60) return 'now'; if(s<3600) return Math.floor(s/60)+'m'; if(s<86400) return Math.floor(s/3600)+'h'; return Math.floor(s/86400)+'d'; }
+
+if(!window.supabase){
+  $('#app').innerHTML = '<div class="pad"><p class="err">Could not load the Supabase library. Check your internet connection and reload.</p></div>';
+  throw new Error('supabase-js not loaded');
+}
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ---------- STATE ---------- */
+let user = null, profile = null, posts = [], dials = JSON.parse(JSON.stringify(DEFAULT_DIALS));
+let mine = {like:new Set(), helped:new Set(), save:new Set()};
+let order = [], view = 'feed', msg = '', authMode = 'login', tmpInterests = [];
+let comments = {}, openC = new Set();
+let banReason = '', reportsList = [];
+
+/* ---------- DATA ---------- */
+async function loadProfile(){
+  const {data} = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  profile = data || null;
+}
+async function loadSettings(){
+  const {data} = await sb.from('settings').select('dials').eq('id',1).maybeSingle();
+  if(data && data.dials) dials = Object.assign(JSON.parse(JSON.stringify(DEFAULT_DIALS)), data.dials, {boost:Object.assign({}, DEFAULT_DIALS.boost, data.dials.boost||{})});
+}
+async function loadPosts(){
+  const {data, error} = await sb.from('post_feed').select('*').order('created_at',{ascending:false}).limit(100);
+  if(error){ toast('Could not load posts'); return; }
+  posts = data || [];
+}
+async function loadMine(){
+  mine = {like:new Set(), helped:new Set(), save:new Set()};
+  const {data} = await sb.from('reactions').select('post_id,kind');
+  (data || []).forEach(r => { if(mine[r.kind]) mine[r.kind].add(r.post_id); });
+}
+async function handleSession(session){
+  user = session ? session.user : null;
+  profile = null;
+  if(user){
+    await Promise.all([loadProfile(), loadSettings(), loadPosts(), loadMine()]);
+    if(profile && profile.banned){
+      const {data} = await sb.from('bans').select('reason').eq('user_id', user.id).maybeSingle();
+      banReason = data ? data.reason : '';
+    }
+  }
+  show();
+}
+sb.auth.onAuthStateChange((event, session) => {
+  if(!['INITIAL_SESSION','SIGNED_IN','SIGNED_OUT'].includes(event)) return;
+  if(event === 'SIGNED_IN' && user && session && session.user.id === user.id) return;
+  setTimeout(() => handleSession(session), 0);
+});
+
+/* ---------- THE ALGORITHM ---------- */
+function score(p){
+  const d = dials;
+  const interests = (profile && profile.interests) || [];
+  const match = interests.includes(p.category) ? 1 : 0.25;
+  const recency = Math.exp(-((Date.now() - new Date(p.created_at)) / 36e5) / 72);
+  const value = Math.min(1, (p.helped*2 + p.saves) / 40);
+  const pop = Math.min(1, p.likes / 50);
+  return (d.topic/100)*match*3 + (d.recency/100)*recency*2 + (d.value/100)*value*2
+       + (d.popularity/100)*pop + ((d.boost[p.category]||0)/100)*2 + (p.boosted ? 1.5 : 0);
+}
+function computeOrder(){
+  const sorted = posts.map(p => ({p, s:score(p)})).sort((a,b) => b.s - a.s);
+  const limit = Math.floor(FEED_SIZE * dials.humorCap / 100);
+  let laughs = 0; const out = [];
+  for(const {p} of sorted){
+    if(out.length >= FEED_SIZE) break;
+    if(p.category === 'laughs'){ if(laughs >= limit) continue; laughs++; }
+    out.push(p.id);
+  }
+  return out;
+}
+function why(p){
+  const interests = (profile && profile.interests) || [];
+  if(p.boosted) return 'Picked by the Worthwhile team';
+  if(interests.includes(p.category)) return 'You asked for more ' + CATS[p.category].name;
+  if((dials.boost[p.category]||0) > 0) return 'A topic we are featuring';
+  return 'Helpful to many people';
+}
+
+/* ---------- RENDER ---------- */
+function mediaHTML(p){
+  if(p.media_url && p.media_type === 'video') return `<video class="media" controls playsinline preload="metadata" src="${esc(p.media_url)}"></video>`;
+  if(p.media_url) return `<img class="media" src="${esc(p.media_url)}" alt="${esc(p.title)}" loading="lazy">`;
+  if(p.art && ART[p.art]) return `<div class="artcard"><svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART[p.art]}</svg><div class="cap"><small>${esc(CATS[p.category].name)}</small><h3>${esc(p.title)}</h3></div></div>`;
+  return `<div class="textcard cat-${p.category}"><small>${esc(CATS[p.category].name)}</small><h3>${esc(p.title)}</h3></div>`;
+}
+function commentsHTML(p){
+  const list = comments[p.id];
+  const items = list === undefined ? '<p class="none">Loading…</p>'
+    : (list.length ? list.map(c => `<p><b>@${esc((c.profiles && c.profiles.username) || 'user')}</b> ${esc(c.body)}</p>`).join('') : '<p class="none">No comments yet.</p>');
+  return `<div class="comments">${items}
+    <div class="cform"><input type="text" id="ci-${p.id}" maxlength="300" placeholder="Add a thoughtful comment" aria-label="Comment">
+    <button class="btn" data-act="addc" data-id="${p.id}">Post</button></div></div>`;
+}
+function postHTML(p){
+  const lk = mine.like.has(p.id), h = mine.helped.has(p.id), sv = mine.save.has(p.id);
+  const safeSrc = p.source_url && /^https?:\/\//.test(p.source_url);
+  return `<article class="post">
+    ${mediaHTML(p)}
+    <div class="meta">
+      <span class="catlabel t-${p.category}"><i></i>${esc(CATS[p.category].name)}</span>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.body)}</p>
+      ${safeSrc ? `<div class="source">Source: <a href="${esc(p.source_url)}" target="_blank" rel="noopener noreferrer">${esc(p.source_url)}</a></div>` : ''}
+      <div class="why">${esc(why(p))} \u00B7 @${esc(p.username)} \u00B7 ${ago(p.created_at)}</div>
+    </div>
+    <div class="actions icons">
+      <button class="ib like" data-act="like" data-id="${p.id}" aria-pressed="${lk}" aria-label="Like" title="Like">${ICONS.heart}<span>${p.likes}</span></button>
+      <button class="ib help" data-act="helped" data-id="${p.id}" aria-pressed="${h}" aria-label="This helped me" title="This helped me">${ICONS.bulb}<span>${p.helped}</span></button>
+      <button class="ib" data-act="comments" data-id="${p.id}" aria-label="Comments" title="Comments">${ICONS.comment}<span>${p.comments}</span></button>
+      <button class="ib" data-act="share" data-id="${p.id}" aria-label="Share" title="Share">${ICONS.share}</button>
+      <span class="sp"></span>
+      <button class="ib save" data-act="save" data-id="${p.id}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save'}" title="${sv?'Saved':'Save'}">${ICONS.bookmark}</button>
+    </div>
+    ${openC.has(p.id) ? commentsHTML(p) : ''}
+    <div class="linkrow">
+      <button class="linkbtn" data-act="report" data-id="${p.id}">Report</button>
+      ${(user && (p.user_id === user.id || (profile && profile.is_admin))) ? `<button class="linkbtn" data-act="delete" data-id="${p.id}">Delete</button>` : ''}
+    </div>
+  </article>`;
+}
+function renderFeed(){
+  const list = order.map(id => posts.find(p => p.id === id)).filter(Boolean);
+  if(!list.length){
+    $('#app').innerHTML = `<div class="empty"><h2 style="margin-bottom:8px">Nothing here yet</h2><p>Be the first to share something worthwhile.</p><button class="btn big primary" data-view="post">Share something useful</button></div>`;
+    return;
+  }
+  $('#app').innerHTML = list.map(postHTML).join('') + `
+    <section class="caught" aria-label="End of feed">
+      <h2>You\u2019re all caught up</h2>
+      <p>That\u2019s everything worth your time for now. Go use what you learned.</p>
+      <button class="btn big primary" data-view="post">Share something useful</button>
+      <p style="margin:14px auto 0"><button class="linkbtn" data-act="refresh">Check for new posts</button></p>
+    </section>`;
+}
+function renderSaved(){
+  const list = posts.filter(p => mine.save.has(p.id));
+  $('#app').innerHTML = `<div class="pad"><h2 style="font-size:28px;margin:10px 0 4px">Saved</h2></div>` +
+    (list.length ? list.map(postHTML).join('') : `<div class="empty"><p>Tap the bookmark on a post to keep it here.</p></div>`);
+}
+function renderAuth(){
+  const login = authMode === 'login';
+  $('#app').innerHTML = `<div class="pad">
+    <h2 style="font-size:30px;margin-top:10px">${login ? 'Welcome back' : 'Join Worthwhile'}</h2>
+    <p class="lead">A feed built to leave you better off, not just busier.</p>
+    <div class="seg" role="group" aria-label="Log in or sign up">
+      <button data-act="mode" data-id="login" aria-pressed="${login}">Log in</button>
+      <button data-act="mode" data-id="signup" aria-pressed="${!login}">Sign up</button>
+    </div>
+    ${msg ? `<p class="${msg.startsWith('ok:') ? 'notice' : 'err'}" role="alert">${esc(msg.replace(/^ok:/,''))}</p>` : ''}
+    ${login ? '' : `<label class="field"><span>Username</span><input type="text" id="a-user" maxlength="20" autocomplete="username"><small>Letters, numbers and underscores.</small></label>`}
+    <label class="field"><span>Email</span><input type="email" id="a-email" autocomplete="email"></label>
+    <label class="field"><span>Password</span><input type="password" id="a-pass" autocomplete="${login ? 'current-password' : 'new-password'}"><small>${login ? '' : 'At least 6 characters.'}</small></label>
+    <button class="btn big primary" data-act="auth">${login ? 'Log in' : 'Create account'}</button>
+  </div>`;
+}
+function renderInterests(onboarding){
+  if(onboarding && !tmpInterests.length) tmpInterests = [];
+  $('#app').innerHTML = `<div class="pad">
+    <h2 style="font-size:30px;margin-top:10px">${onboarding ? 'What do you want more of in your life?' : 'Your interests'}</h2>
+    <p class="lead">Choose at least one. Your feed will lean toward these, and you can change them any time.</p>
+    <div class="chips">${Object.keys(CATS).map(k => `
+      <button class="chip" data-act="interest" data-id="${k}" aria-pressed="${tmpInterests.includes(k)}">
+        <i class="dot cat-${k}"></i><div><b>${esc(CATS[k].name)}</b><span>${esc(CATS[k].desc)}</span></div>
+      </button>`).join('')}</div>
+    <button class="btn big primary" data-act="saveInterests" ${tmpInterests.length ? '' : 'disabled'}>${onboarding ? 'Start my feed' : 'Save interests'}</button>
+  </div>`;
+}
+function renderYou(){
+  $('#app').innerHTML = `<div class="pad">
+    <h2 style="font-size:28px;margin:10px 0 4px">@${esc(profile.username)}</h2>
+    <p class="lead">${esc(user.email)}${profile.is_admin ? ' \u00B7 Admin' : ''}</p>
+    <p style="margin:0 0 6px"><b>Your interests:</b> ${profile.interests.map(k => esc(CATS[k] ? CATS[k].name : k)).join(', ')}</p>
+    <p style="margin:0 0 20px"><button class="btn" data-act="editInterests">Change interests</button></p>
+    <button class="btn" data-act="signout">Log out</button>
+  </div>`;
+}
+function renderPost(){
+  $('#app').innerHTML = `<div class="pad">
+    <h2 style="font-size:28px;margin-top:10px">Share something worthwhile</h2>
+    <p class="lead">Teach, inspire, or report something true. Keep it useful.</p>
+    ${msg ? `<p class="err" role="alert">${esc(msg)}</p>` : ''}
+    <label class="field"><span>Photo or video (optional)</span><input type="file" id="f-file" accept="image/*,video/*"><small>Up to ${MAX_MB} MB.</small></label>
+    <label class="field"><span>Title</span><input type="text" id="f-title" maxlength="80"></label>
+    <label class="field"><span>What should people take away?</span><textarea id="f-body" maxlength="400"></textarea></label>
+    <label class="field"><span>Category</span><select id="f-cat">${Object.keys(CATS).map(k => `<option value="${k}">${esc(CATS[k].name)}</option>`).join('')}</select></label>
+    <label class="field"><span>Source link</span><input type="url" id="f-source" placeholder="https://\u2026"><small>Required for "What\u2019s happening" posts, so people can check the facts.</small></label>
+    <button class="btn big primary" id="publishBtn" data-act="publish">Publish</button>
+  </div>`;
+}
+function dial(key, label, hint, min, max, val){
+  return `<div class="dial"><label for="d-${key}">${label}<output id="o-${key}">${val}</output></label>
+    <small>${hint}</small><input type="range" id="d-${key}" data-dial="${key}" min="${min}" max="${max}" value="${val}"></div>`;
+}
+function renderDials(){
+  const d = dials;
+  $('#app').innerHTML = `<div class="pad">
+    <h2 style="font-size:28px;margin-top:10px">Algorithm dials</h2>
+    <p class="lead">You decide what the feed values. These settings change the feed for everyone.</p>
+    ${dial('topic','Match to what people asked for','How strongly to show people their chosen topics.',0,100,d.topic)}
+    ${dial('value','Real value','Weight for "This helped me" and saves.',0,100,d.value)}
+    ${dial('recency','Newness','Prefer fresh posts.',0,100,d.recency)}
+    ${dial('popularity','Popularity (likes)','Keep this low to avoid viral noise.',0,100,d.popularity)}
+    ${dial('humorCap','Most laughs per feed (%)','Hard limit on humor in each feed.',0,50,d.humorCap)}
+    <div class="group"><h2>Push a category</h2>
+      ${Object.keys(CATS).map(k => dial('boost-'+k, CATS[k].name, 'Below 0 holds it back, above 0 pushes it.', -100, 100, d.boost[k]||0)).join('')}
+    </div>
+    <div class="group"><h2>Feed preview (for your interests)</h2>
+      <p class="lead" style="margin-top:0">Use Boost to pin a post higher for everyone.</p>
+      <ol class="rank" id="rank"></ol>
+    </div>
+  </div>`;
+  updateRanking();
+}
+function updateRanking(){
+  const el = $('#rank'); if(!el) return;
+  order = computeOrder();
+  el.innerHTML = order.map((id,i) => {
+    const p = posts.find(x => x.id === id);
+    return `<li><span class="n">${i+1}</span>
+      <div class="tt"><b>${esc(p.title)}</b><span class="t-${p.category}">${esc(CATS[p.category].name)}</span></div>
+      <span class="sc">${score(p).toFixed(1)}</span>
+      <button class="btn" data-act="boost" data-id="${p.id}" aria-pressed="${!!p.boosted}">Boost</button></li>`;
+  }).join('') || '<li><span class="tt">No posts yet.</span></li>';
+}
+function renderNav(){
+  const nav = document.querySelector('nav.tabs');
+  if(!user || !profile || profile.banned){ nav.style.display = 'none'; return; }
+  nav.style.display = 'flex';
+  const items = [['feed','Feed'],['post','Post'],['saved','Saved'],['you','You']];
+  if(profile.is_admin){ items.push(['reports','Reports']); items.push(['dials','Dials']); }
+  $('#navin').innerHTML = items.map(([v,l]) => `<button data-view="${v}" ${view===v?'aria-current="page"':''}>${l}</button>`).join('');
+}
+function show(v){
+  if(v) view = v;
+  msg = v ? '' : msg;
+  renderNav();
+  if(!user){ renderAuth(); return; }
+  if(!profile){ $('#app').innerHTML = '<div class="pad"><p class="err">We could not load your profile. Refresh the page and try again.</p></div>'; return; }
+  if(profile.banned){ renderBanned(); return; }
+  if(!profile.interests || !profile.interests.length){ renderInterests(true); return; }
+  if(view === 'feed'){ order = computeOrder(); renderFeed(); }
+  else if(view === 'post') renderPost();
+  else if(view === 'saved') renderSaved();
+  else if(view === 'you') renderYou();
+  else if(view === 'dials' && profile.is_admin) renderDials();
+  else if(view === 'reports' && profile.is_admin){ $('#app').innerHTML = '<div class="empty">Loading\u2026</div>'; loadReports().then(renderReports); }
+  else { view = 'feed'; order = computeOrder(); renderFeed(); }
+  if(v) window.scrollTo(0,0);
+}
+
+/* ---------- ACTIONS ---------- */
+async function doAuth(){
+  const email = $('#a-email').value.trim(), pass = $('#a-pass').value;
+  if(!email || !pass){ msg = 'Enter your email and password.'; renderAuth(); return; }
+  if(authMode === 'login'){
+    const {error} = await sb.auth.signInWithPassword({email, password:pass});
+    if(error){ msg = error.message; renderAuth(); }
+  } else {
+    const username = $('#a-user').value.trim();
+    if(!/^[A-Za-z0-9_]{3,20}$/.test(username)){ msg = 'Username must be 3 to 20 letters, numbers or underscores.'; renderAuth(); return; }
+    if(pass.length < 6){ msg = 'Password must be at least 6 characters.'; renderAuth(); return; }
+    const {data, error} = await sb.auth.signUp({email, password:pass, options:{data:{username}}});
+    if(error){ msg = error.message; renderAuth(); }
+    else if(!data.session){ authMode = 'login'; msg = 'ok:Account created. Check your email to confirm it, then log in.'; renderAuth(); }
+  }
+}
+async function toggleReaction(kind, id){
+  const p = posts.find(x => x.id === id); if(!p) return;
+  const field = {like:'likes', helped:'helped', save:'saves'}[kind];
+  const was = mine[kind].has(id);
+  if(was){ mine[kind].delete(id); p[field]--; } else { mine[kind].add(id); p[field]++; }
+  view === 'saved' ? renderSaved() : renderFeed();
+  const q = was ? sb.from('reactions').delete().match({user_id:user.id, post_id:id, kind})
+                : sb.from('reactions').insert({user_id:user.id, post_id:id, kind});
+  const {error} = await q;
+  if(error){
+    if(was){ mine[kind].add(id); p[field]++; } else { mine[kind].delete(id); p[field]--; }
+    view === 'saved' ? renderSaved() : renderFeed();
+    toast('Could not save that. Try again.');
+  } else if(kind === 'save'){ toast(was ? 'Removed from saved' : 'Saved'); }
+}
+async function toggleComments(id){
+  if(openC.has(id)){ openC.delete(id); view === 'saved' ? renderSaved() : renderFeed(); return; }
+  openC.add(id); view === 'saved' ? renderSaved() : renderFeed();
+  const {data, error} = await sb.from('comments').select('id,body,created_at,user_id,profiles(username)').eq('post_id', id).order('created_at');
+  comments[id] = error ? [] : data;
+  view === 'saved' ? renderSaved() : renderFeed();
+}
+async function addComment(id){
+  const input = document.getElementById('ci-'+id); const body = input.value.trim(); if(!body) return;
+  const {data, error} = await sb.from('comments').insert({post_id:id, user_id:user.id, body}).select('id,body,created_at,user_id,profiles(username)').single();
+  if(error){ toast('Could not post your comment'); return; }
+  (comments[id] = comments[id] || []).push(data);
+  posts.find(p => p.id === id).comments++;
+  view === 'saved' ? renderSaved() : renderFeed();
+}
+async function sharePost(p){
+  if(!p) return;
+  const text = p.title + ': ' + p.body;
+  const data = {title:p.title, text};
+  if(/^https?:/.test(location.href)) data.url = location.href;
+  try{ if(navigator.share){ await navigator.share(data); return; } }
+  catch(e){ if(e && e.name === 'AbortError') return; }
+  try{ await navigator.clipboard.writeText(text + (data.url ? ' ' + data.url : '')); toast('Copied, ready to paste'); }
+  catch(e){ toast('Sharing is not available here'); }
+}
+async function reportPost(id){
+  const reason = prompt('Why are you reporting this post? (for example: false information, harmful, spam)');
+  if(!reason || !reason.trim()) return;
+  const {error} = await sb.from('reports').insert({post_id:id, user_id:user.id, reason:reason.trim().slice(0,300)});
+  toast(error ? 'Could not send your report' : 'Report sent. Thank you.');
+}
+async function deletePost(id){
+  if(!confirm('Delete this post? This cannot be undone.')) return;
+  const {error} = await sb.from('posts').delete().eq('id', id);
+  if(error){ toast('Could not delete the post'); return; }
+  posts = posts.filter(p => p.id !== id); order = order.filter(x => x !== id);
+  toast('Deleted'); view === 'saved' ? renderSaved() : renderFeed();
+}
+async function publish(){
+  const title = $('#f-title').value.trim(), body = $('#f-body').value.trim();
+  const category = $('#f-cat').value, source = $('#f-source').value.trim();
+  const file = $('#f-file').files[0];
+  const fail = m => { msg = m; renderPost(); };
+  if(!title) return fail('Add a title.');
+  if(!body) return fail('Say what people will take away.');
+  if(source && !/^https?:\/\//.test(source)) return fail('The source link must start with http:// or https://');
+  if(category === 'news' && !source) return fail('News posts need a source link.');
+  if(file && file.size > MAX_MB*1024*1024) return fail('That file is too large. The limit is ' + MAX_MB + ' MB.');
+  const btn = $('#publishBtn'); btn.disabled = true; btn.textContent = 'Publishing\u2026';
+  let media_url = null, media_type = null;
+  if(file){
+    const ext = ((file.name.split('.').pop() || 'bin').toLowerCase()).replace(/[^a-z0-9]/g,'').slice(0,5) || 'bin';
+    const path = `${user.id}/${Date.now()}.${ext}`;
+    const up = await sb.storage.from('media').upload(path, file, {contentType:file.type});
+    if(up.error){ return fail('Upload failed: ' + up.error.message); }
+    media_url = sb.storage.from('media').getPublicUrl(path).data.publicUrl;
+    media_type = file.type.startsWith('video') ? 'video' : 'image';
+  }
+  const {error} = await sb.from('posts').insert({user_id:user.id, category, title, body, source_url:source || null, media_url, media_type});
+  if(error) return fail('Could not publish: ' + error.message);
+  await loadPosts(); msg = ''; toast('Published'); show('feed');
+}
+let dialTimer;
+function saveDials(){
+  clearTimeout(dialTimer);
+  dialTimer = setTimeout(async () => {
+    const {error} = await sb.from('settings').update({dials}).eq('id',1);
+    if(error) toast('Could not save the dials');
+  }, 600);
+}
+async function toggleBoost(id){
+  const p = posts.find(x => x.id === id); if(!p) return;
+  const next = !p.boosted;
+  const {error} = await sb.from('posts').update({boosted:next}).eq('id', id);
+  if(error){ toast('Could not boost this post'); return; }
+  p.boosted = next; updateRanking();
+}
+
+/* ---------- MODERATION ---------- */
+function renderBanned(){
+  $('#app').innerHTML = `<div class="pad">
+    <h2 style="font-size:28px;margin:10px 0 12px">Your account is suspended</h2>
+    <p class="notice">${esc(banReason || 'Your account was suspended for breaking the Worthwhile rules.')}</p>
+    <p class="lead">If you think this is a mistake, contact the Worthwhile team.</p>
+    <button class="btn" data-act="signout">Log out</button>
+  </div>`;
+}
+async function loadReports(){
+  const {data, error} = await sb.from('reports')
+    .select('id,reason,created_at,post_id,posts(id,title,user_id,profiles(username)),profiles(username)')
+    .order('created_at', {ascending:false}).limit(50);
+  reportsList = error ? [] : data;
+  if(error) toast('Could not load reports');
+}
+function renderReports(){
+  const items = reportsList.map(r => {
+    const p = r.posts || {};
+    const author = (p.profiles && p.profiles.username) || 'unknown';
+    const reporter = (r.profiles && r.profiles.username) || 'someone';
+    return `<div class="notice"><b>${esc(p.title || 'Deleted post')}</b><br>
+      by @${esc(author)} \u00B7 reported by @${esc(reporter)} ${ago(r.created_at)} ago<br>
+      Reason: ${esc(r.reason)}
+      <div class="actions" style="padding:10px 0 0">
+        <button class="btn" data-act="rdismiss" data-id="${r.id}">Dismiss</button>
+        <button class="btn" data-act="rdelete" data-id="${r.id}">Delete post</button>
+        <button class="btn" data-act="rban" data-id="${r.id}">Ban author</button>
+      </div></div>`;
+  }).join('');
+  $('#app').innerHTML = `<div class="pad"><h2 style="font-size:28px;margin:10px 0 4px">Reports</h2>
+    <p class="lead">Posts people flagged. Review each one.</p>
+    ${items || '<div class="empty"><p>No reports right now.</p></div>'}</div>`;
+}
+async function dismissReport(id){
+  const {error} = await sb.from('reports').delete().eq('id', id);
+  if(error){ toast('Could not dismiss'); return; }
+  reportsList = reportsList.filter(r => r.id !== id); renderReports();
+}
+async function reportDeletePost(id){
+  const r = reportsList.find(x => x.id === id); if(!r || !r.post_id) return;
+  if(!confirm('Delete this post?')) return;
+  const {error} = await sb.from('posts').delete().eq('id', r.post_id);
+  if(error){ toast('Could not delete the post'); return; }
+  reportsList = reportsList.filter(x => x.post_id !== r.post_id);
+  posts = posts.filter(p => p.id !== r.post_id);
+  toast('Post deleted'); renderReports();
+}
+async function reportBan(id){
+  const r = reportsList.find(x => x.id === id); if(!r || !r.posts) return;
+  const reason = prompt('Message this user will see about why they were banned:', 'Your account was suspended for posting content that breaks the Worthwhile rules.');
+  if(!reason || !reason.trim()) return;
+  const {error} = await sb.rpc('ban_user', {target:r.posts.user_id, reason:reason.trim()});
+  if(error){ toast(error.message); return; }
+  toast('User banned'); await loadPosts(); renderReports();
+}
+
+/* ---------- EVENTS ---------- */
+document.addEventListener('click', async e => {
+  const nav = e.target.closest('[data-view]');
+  if(nav){ show(nav.dataset.view); return; }
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const id = b.dataset.id, act = b.dataset.act;
+  if(act === 'mode'){ authMode = id; msg = ''; renderAuth(); }
+  else if(act === 'auth') await doAuth();
+  else if(act === 'signout'){ await sb.auth.signOut(); }
+  else if(act === 'interest'){
+    const i = tmpInterests.indexOf(id);
+    if(i >= 0) tmpInterests.splice(i,1); else tmpInterests.push(id);
+    renderInterests(!profile.interests.length);
+  }
+  else if(act === 'editInterests'){ tmpInterests = [...profile.interests]; renderInterests(false); }
+  else if(act === 'saveInterests'){
+    const {error} = await sb.from('profiles').update({interests:tmpInterests}).eq('id', user.id);
+    if(error){ toast('Could not save your interests'); return; }
+    profile.interests = [...tmpInterests]; toast('Saved'); show('feed');
+  }
+  else if(act === 'like' || act === 'helped' || act === 'save') await toggleReaction(act, id);
+  else if(act === 'comments') await toggleComments(id);
+  else if(act === 'addc') await addComment(id);
+  else if(act === 'share') sharePost(posts.find(p => p.id === id));
+  else if(act === 'report') await reportPost(id);
+  else if(act === 'delete') await deletePost(id);
+  else if(act === 'refresh'){ await Promise.all([loadPosts(), loadSettings()]); show('feed'); }
+  else if(act === 'publish') await publish();
+  else if(act === 'boost') await toggleBoost(id);
+  else if(act === 'rdismiss') await dismissReport(id);
+  else if(act === 'rdelete') await reportDeletePost(id);
+  else if(act === 'rban') await reportBan(id);
+});
+document.addEventListener('input', e => {
+  const k = e.target.dataset && e.target.dataset.dial; if(!k) return;
+  const v = Number(e.target.value);
+  $('#o-'+k).textContent = v;
+  if(k.startsWith('boost-')) dials.boost[k.slice(6)] = v; else dials[k] = v;
+  saveDials(); updateRanking();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target.id && e.target.id.startsWith('ci-')) addComment(e.target.id.slice(3));
+  if(e.key === 'Enter' && (e.target.id === 'a-pass' || e.target.id === 'a-email')) doAuth();
+});
+</script>
+</body>
+</html>
